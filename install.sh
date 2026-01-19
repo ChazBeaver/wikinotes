@@ -18,7 +18,7 @@ cat <<'EOF'
 \  /\  /_| |_| |\  \_| |_     | |\  \ \_/ / | | | |___/\__/ /
  \/  \/ \___/\_| \_/\___/     \_| \_/\___/  \_/ \____/\____/ 
                                                              
-                   Installing Wiki-Notes
+                   Installing WikiNotes
 
 EOF
 
