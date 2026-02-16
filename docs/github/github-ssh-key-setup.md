@@ -147,6 +147,10 @@ pbcopy < ~/.ssh/custom_key_name.pub
 xclip -sel clip < ~/.ssh/custom_key_name.pub
 ```
 
+**Omarchy**
+```bash
+cat ~/.ssh/custom_key_name.pub | wl-copy
+```
 ---
 
 ## 6️⃣ Add the SSH Key to GitHub
