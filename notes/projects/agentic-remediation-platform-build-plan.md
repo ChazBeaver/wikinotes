@@ -43,7 +43,7 @@
 
 ## 1. Why this project exists
 
-Chaz is a senior platform engineer on a Big Bang based EKS platform in AWS GovCloud (DoD, cATO, STIG remediation, Iron Bank images, ArgoCD and Flux, Istio, Prometheus). Kubernetes is a strength. Terraform and AWS breadth are self-identified weak points. The certification path for the next 18 months is Terraform Associate 004 (Nov 2026), Security+ renewal via CertMaster CE (by Feb 27, 2027), AWS Solutions Architect Associate (spring 2027), CKA retake (mid 2027, current CKA expired June 27, 2026), AWS DevOps Engineer Professional (early 2028), then CKS.
+Chaz is a senior platform engineer on a Big Bang based EKS platform in AWS GovCloud (DoD, cATO, STIG remediation, Iron Bank images, ArgoCD and Flux, Istio, Prometheus). Kubernetes is a strength. Terraform and AWS breadth are self-identified weak points. The certification path for the next 24 months is Terraform Associate 004 (Nov 2026), Security+ renewal via CertMaster CE (by Feb 27, 2027), AWS Solutions Architect Associate (May 2027), AWS DevOps Engineer Professional (Jan or Feb 2028), CKA retake (Apr 2028, current CKA expired June 27, 2026), then CKS (Sep 2028). Kubernetes certs are deliberately last. The dated study plan is in `notes/study-plan/September_24_2026_STUDY_PLAN.md`.
 
 This project is the single build that exercises all of that at once and adds the AI engineering skill Chaz wants: designing, running, securing, and optimizing agentic workflows without touching model training.
 
@@ -636,7 +636,7 @@ Each phase has a plan document in `docs/plans/` once work starts. Dates align wi
 - Start the SAA course. Every SAA topic that maps to a Terraform resource in this repo gets written by hand in this repo.
 **Non-goals:** No worker agent yet. Resist it.
 
-### Phase 3: The loop closes (May to Jul 2027, alongside CKA retake)
+### Phase 3: The loop closes (May to Jul 2027, June and July are a no-exam window)
 
 **Objective:** `remediate-finding`, `review-remediation`, and `verify-remediation` from 8.8, the review layer from 8.9, and evidence from 8.10.
 **Gate:** Three findings on the canary app go from detection to verified evidence record with Chaz doing nothing but approving the merge. Metrics from section 2 are all populated.
@@ -645,7 +645,7 @@ Each phase has a plan document in `docs/plans/` once work starts. Dates align wi
 - Reviewer workflow and CodeRabbit side by side. Start tracking disagreement.
 - Verifier workflow and evidence schema validation in CI.
 - Branch protection configured and documented.
-- Retake CKA. The cluster hardening work here overlaps with the CKA curriculum.
+- No exam study in June and July. This phase gets the full weekly time budget.
 
 ### Phase 4: In-cluster agents and tenancy (Aug to Dec 2027, alongside AWS DevOps Pro)
 
@@ -659,7 +659,7 @@ Each phase has a plan document in `docs/plans/` once work starts. Dates align wi
 - Expand worker categories to manifest-change. Terraform-change remains needs-human until Phase 5.
 - DevOps Pro exam early 2028. The multi-environment promotion and preview flow here is directly relevant.
 
-### Phase 5: Hardening and Terraform remediation (2028, alongside CKS)
+### Phase 5: Hardening and Terraform remediation (2028, alongside CKA retake in April and CKS in September)
 
 **Objective:** Agents propose Terraform changes with plan output in the PR, still human-applied. Runtime security with Falco. gVisor or equivalent for agent Jobs if feasible. Full threat model written up.
 **Gate:** A Terraform misconfiguration finding from Checkov results in a PR with a plan that a human applies through the approval workflow, and the evidence record captures it.
@@ -717,6 +717,7 @@ Each phase has a plan document in `docs/plans/` once work starts. Dates align wi
 | 2026-09-24 | Terraform-change remediations are needs-human until Phase 5 | Blast radius. Learn on images and manifests first |
 | 2026-09-24 | Home lab is dev, EKS is prod | Cost, and a real promotion flow for DevOps Pro study |
 | 2026-09-24 | Commercial AWS with GovCloud-compatible patterns | Personal GovCloud is impractical. Keep it portable |
+| 2026-09-24 | All Kubernetes certs (CKA, CKS) moved to 2028, after both AWS exams | Kubernetes is the strength and is used daily. Weak spots first. Phase 5 pairs with them |
 
 ---
 
