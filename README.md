@@ -23,6 +23,26 @@ To use the full functionality of `Wiki-Notes`, make sure the following tools are
 
 ---
 
+## 🚀 Install
+
+Run the install script once per machine to register the repo location and its aliases:
+
+```bash
+./install.sh
+```
+
+It persists these lines in `~/.dotfiles-env.sh` (the same file appdots and hyprdots use) and is safe to re-run; a moved repo just updates the path:
+
+| Line | Purpose |
+|------|---------|
+| `export WIKINOTES_DIR=...` | Absolute path to this repo |
+| `alias wikinotes` | `cd` straight into the repo |
+| `alias w` | Run `scripts/wiki.sh` (fuzzy search) from anywhere |
+
+Open a new shell afterwards, or `source ~/.dotfiles-env.sh`.
+
+---
+
 ## 📁 Project Structure
 
 - `docs/` – All documentation organized by topic
