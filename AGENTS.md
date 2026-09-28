@@ -18,7 +18,7 @@ covers only what an agent must do differently here.
 ## Boundaries
 
 - Do not commit or push unless asked. Leave changes in the working tree and
-  offer a Conventional Commit message.
+  offer a Conventional Commit message labeled with the repository name.
 - Never write credentials, tokens, or shell history into a note, even as an
   example. Use obvious placeholders such as `<token>`.
 - `install.sh` is the only thing that touches `~/.dotfiles-env.sh`. It
