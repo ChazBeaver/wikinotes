@@ -2,10 +2,11 @@
 
 Created: 2026-10-04
 
-Status: Proposed; no infrastructure has been provisioned by this plan.
+Status: Deferred until all planned core certifications are complete; no
+infrastructure has been provisioned by this plan.
 
-Purpose: A practical reference for deciding when to build, choosing tools, and
-using the lab to become more confident with real platform engineering work.
+Purpose: Keep certification completion first, then use this reference to choose
+tools, build a homelab, and deepen practical platform engineering skills.
 
 ## Contents
 
@@ -23,9 +24,16 @@ using the lab to become more confident with real platform engineering work.
 
 ## Direction and priorities
 
-Finish Terraform Associate 004 first, then prioritize AWS Solutions Architect
-Associate with focused AWS practice. A homelab is optional and should support
-these goals without becoming a prerequisite for studying them.
+Complete the entire planned core certification path before pursuing the homelab
+build. Finishing Terraform Associate 004 or AWS Solutions Architect Associate
+alone does not unlock this project. Homelab implementation begins only after
+all planned core certifications, renewals, and retakes are complete.
+
+During certification preparation, use course-provided labs, exam simulators,
+and narrowly scoped practice on existing resources. Hands-on study remains
+important, but it does not require starting this homelab project. Defer homelab
+hardware purchases, Proxmox installation, provisioning automation, and cluster
+deployment until the certification completion gate is met.
 
 Two existing computers already run the personal configuration repositories and
 provide a way to test desktop changes. Another workstation recovery project is
@@ -37,26 +45,45 @@ and a small kubeadm cluster. The eventual hardware assumption is three or more
 servers with approximately 32 GB RAM each; CPU, disks, NICs, power use, and actual
 availability still need to be checked. There is no hardware purchase commitment.
 
-A successful first version is a working study environment and a few completed
-exercises. Every tool being studied does not have to become a permanent part of
-personal infrastructure. AWS joins the project when an AWS-specific objective or
-a useful service calls for it.
+A successful first version, after certification completion, is a working
+practice environment and a few completed exercises. Tools learned during
+certification study need not all become permanent personal infrastructure. AWS joins the
+homelab when an AWS-specific objective or a useful service calls for it.
 
 The existing [dated study plan](../study-plan/September_24_2026_STUDY_PLAN.md)
-remains a separate reference. This project note does not change its deadlines or
-require implementation of another, larger project.
+remains the reference for certification order and target dates. For this
+homelab, the decision recorded on 2026-10-04 takes precedence over suggestions
+to build alongside certification study. This note does not edit that historical
+plan or require implementation of another, larger project.
+
+### Certification completion gate
+
+Complete the current core roadmap before starting build milestone 0:
+
+- [ ] Terraform Associate 004.
+- [ ] Security+ renewal listed in the dated study plan.
+- [ ] AWS Solutions Architect Associate.
+- [ ] AWS DevOps Engineer Professional.
+- [ ] CKA retake listed in the dated study plan.
+- [ ] CKS.
+
+The gate covers the currently planned core path. Optional future certifications
+are separate decisions; ongoing renewal cycles do not postpone the homelab
+indefinitely. After completing the core path, reassess whether the build is
+still useful before committing time or money.
 
 ## How the certifications fit
 
-| Goal | Practice that matters most | Homelab contribution |
+| Goal | Practice that matters most during certification study | Later homelab application |
 | --- | --- | --- |
-| Terraform Associate 004 | Providers, plans, variables, modules, state, imports, drift, lifecycle, and the current HCP Terraform objectives | Useful infrastructure to manage, but a cluster is optional |
-| AWS Solutions Architect Associate | Architecture choices across IAM, networking, compute, storage, databases, resilience, and cost | Reinforces concepts; AWS exercises supply the service-specific experience |
-| AWS DevOps Engineer Professional | Delivery, infrastructure automation, monitoring, incident response, governance, and recovery on AWS | Transfers operational habits; requires additional AWS practice |
-| CKS | Host and cluster hardening, workload isolation, supply-chain security, and investigation | A strong fit for conventional Linux VMs and a disposable Kubernetes cluster |
+| Terraform Associate 004 | Providers, plans, variables, modules, state, imports, drift, lifecycle, and the current HCP Terraform objectives | Apply those skills to VM provisioning after all certifications are complete |
+| AWS Solutions Architect Associate | Architecture choices across IAM, networking, compute, storage, databases, resilience, and cost | Apply architecture tradeoffs and add AWS services only when useful |
+| AWS DevOps Engineer Professional | Delivery, infrastructure automation, monitoring, incident response, governance, and recovery on AWS | Apply operational habits to delivery and recovery exercises |
+| CKS | Host and cluster hardening, workload isolation, supply-chain security, and investigation through course labs and simulators | Retain and deepen security skills on conventional Linux VMs |
 
 Use the official guides to identify gaps and confirm the current exam version
-before booking. The lab backlog below is not a complete exam syllabus:
+before booking. The lab backlog below is for practice after certification
+completion; it is not an exam-preparation requirement or a complete syllabus:
 
 - [Terraform Associate 004 objectives](https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004)
 - [AWS SAA exam guide](https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html)
@@ -66,10 +93,13 @@ before booking. The lab backlog below is not a complete exam syllabus:
 
 SAA and DevOps Professional cover considerably more than EKS. Terraform is useful
 experience, but DevOps Professional also includes AWS-native tools such as
-CloudFormation, CDK, and Systems Manager. Choose CKS or DevOps Professional after
-SAA according to which responsibilities are becoming more important at work.
+CloudFormation, CDK, and Systems Manager. Follow the certification order in the
+dated study plan and complete the full core path before beginning this build.
 
 ## Recommended tools and ownership
+
+These are deferred design recommendations. Recheck them after completing all
+planned core certifications, when the homelab becomes an active project.
 
 | Layer | Starting choice | Owns |
 | --- | --- | --- |
@@ -111,17 +141,22 @@ the selected OS, Kubernetes, runtime, and network-plugin versions.
 
 ## Build milestones
 
+All milestones below begin after the certification completion gate is met.
+Until then, retain them as a future build reference.
+
 ### 0. Decide what the first version must accomplish
 
-- [ ] Finish the current Terraform study milestone before starting a large build.
+- [ ] Confirm that every item in the certification completion gate is complete.
+- [ ] Reassess whether a homelab is still useful and review the deferred design.
 - [ ] Choose a setup timebox, such as two focused weekend sessions, then reassess.
 - [ ] Inventory available CPU, RAM, SSD capacity, NICs, and virtualization support.
 - [ ] Pick one operational question the lab should answer first.
 - [ ] Choose a location outside the server for configuration and backup recovery.
 - [ ] Decide how much ongoing maintenance and electricity are acceptable.
 
-Exit criterion: the first version has one host, a small cluster, and a specific
-learning objective. Extra hardware can remain powered off.
+Exit criterion: all planned core certifications are complete, and the first
+version is scoped to one host, a small cluster, and a specific learning objective.
+Extra hardware can remain powered off.
 
 ### 1. Bootstrap one Proxmox host
 
@@ -247,10 +282,12 @@ Reference: [Kubernetes persistent volumes](https://kubernetes.io/docs/concepts/s
 
 ## Ubuntu and kubeadm or Talos
 
-Ubuntu and kubeadm are the starting recommendation for a security study cluster.
+After certification completion, Ubuntu and kubeadm are the starting
+recommendation for a cluster used to retain and deepen security skills.
 They expose the Linux services, runtime configuration, static pod manifests,
 certificates, logs, and host controls that are useful to inspect and change.
-This is a learning recommendation, not a claim that CKS mandates this setup.
+This is a continuing-practice recommendation; building this cluster is not part
+of the certification preparation plan.
 
 Talos is worth revisiting when the main objective becomes maintaining personal
 services with a declarative operating system. It uses an API rather than SSH,
@@ -265,9 +302,11 @@ References: [Talos overview](https://www.siderolabs.com/talos-linux) and
 
 ## Exercise backlog
 
-Choose one exercise per session. Check it off after demonstrating its success
+After all planned core certifications are complete and the homelab is running,
+choose one exercise per session. Check it off after demonstrating its success
 criterion and writing a short explanation of what happened. These are optional
-experiments, not thirty prerequisites for calling the lab useful.
+experiments for continued practice, not certification prerequisites or thirty
+requirements for calling the lab useful.
 
 Use synthetic data and intentionally limited test workloads. Before a disruptive
 exercise, record the target cluster and recovery method. Control-plane restore,
@@ -372,7 +411,7 @@ and [kubeadm upgrades](https://kubernetes.io/docs/tasks/administer-cluster/kubea
 
 Reference: [operating and recovering etcd for Kubernetes](https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/).
 
-### Security and CKS preparation
+### Security practice after CKS
 
 - [ ] **S1 — Least-privilege RBAC.** Create a service account that can inspect
   selected resources in one namespace. **Success:** positive and negative
@@ -445,6 +484,11 @@ test data. They are not first-host acceptance criteria.
 
 ## AWS and EKS later
 
+The exercises in this section are deferred homelab extensions, to consider
+after all planned core certifications are complete. AWS course labs and focused
+exam practice can still be used during certification study without starting
+this homelab project.
+
 AWS is not needed to run this local lab. Add it for an AWS-specific learning
 objective or a useful service such as off-site object storage. DNS does not
 require Route 53, though Route 53 may become a deliberate learning choice.
@@ -480,6 +524,9 @@ and [EKS deletion procedure](https://docs.aws.amazon.com/eks/latest/userguide/de
 
 ## When to host personal services
 
+Consider hosting services as part of the homelab only after completing the
+certification path and deciding to pursue the build.
+
 Choose a service because it solves an inconvenience already experienced. Possible
 categories include document search, photo backup, shared files, media, or home
 automation. Trying the application and deciding whether it is useful comes
@@ -500,14 +547,16 @@ home router, recovery credentials, or the only copy of its own backups.
 
 ## Keeping the project manageable
 
-Finish the first cluster before adding more platforms. Start with the basic
-diagnostic tools; add GitOps, monitoring, policy tools, and storage components
-when a chosen exercise needs them. One implementation of each is enough.
+Keep the project deferred throughout the current core certification path. Once
+that path is complete and the build begins, finish the first cluster before
+adding more platforms. Start with basic diagnostic tools; add GitOps, monitoring,
+policy tools, and storage components when a chosen exercise needs them. One
+implementation of each is enough.
 
 Measure the lab's value in problems understood and tasks made easier. If setup
-or maintenance repeatedly displaces certification study, stop expanding and use
-the working environment as it stands. A lab that is powered off between study
-sessions can still be successful.
+or maintenance exceeds the time budget after the build begins, stop expanding
+and use the working environment as it stands. A lab that is powered off between
+practice sessions can still be successful.
 
 Keep the system replaceable: record versions, separate infrastructure from
 application configuration, retain ordinary data exports/backups, and test
@@ -543,10 +592,15 @@ small enough that documenting and cleaning it up is part of finishing it.
 
 ## Next actions
 
-1. Continue Terraform Associate 004 preparation using the current objective list.
-2. Decide whether a small local provisioning exercise helps a current study gap.
-3. When ready, complete milestones 0–3 with one host and stop to assess value.
-4. Work through T1, N1, N2, W1, and S1, then choose exercises based on work needs.
-5. Study SAA with targeted AWS practice independently of homelab expansion.
-6. Expand across physical hosts, add persistent services, or evaluate Talos only
-   when there is a concrete reason to do so.
+1. Complete Terraform Associate 004 preparation and the exam.
+2. Complete the planned Security+ renewal, AWS Solutions Architect Associate,
+   AWS DevOps Engineer Professional, CKA retake, and CKS in the order and windows
+   maintained in the dated study plan. Use course labs and exam simulators as
+   needed; keep the homelab build deferred.
+3. Confirm that all items in the certification completion gate are complete.
+4. Only then revisit this document, recheck the tool recommendations, and decide
+   whether the homelab still merits the time and cost.
+5. If proceeding, complete milestones 0–3 with one host and assess value before
+   expanding. Work through T1, N1, N2, W1, and S1 as initial exercises.
+6. Add physical hosts, personal services, Talos, or AWS integrations only when a
+   concrete need or further learning objective justifies them.
