@@ -66,14 +66,10 @@ From the repo root, choose one of these entrypoints:
 ```bash
 EDITOR=nvim bash scripts/wiki.sh       # plain-text preview; Enter opens in editor
 EDITOR=vi bash scripts/wiki-lite.sh    # headings preview; Enter, then y to edit
-bash scripts/wiki-glow.sh              # rendered Markdown preview and Glow pager
 ```
 
-All three require `fzf`, `find`, `sed`, `awk`, and `cut`. The default picker
+Both require `fzf`, `find`, `sed`, `awk`, and `cut`. The default picker
 uses `cat`; lite also uses `grep`. Neither requires `bat` or `ripgrep`.
-The Glow variant requires `glow` (for example, `brew install glow` on macOS
-or `omarchy pkg add glow` on Omarchy). It reads the selection instead of
-opening `$EDITOR`. Press `q` to leave the Glow pager.
 
 Type a filename query, use the arrow keys to select, and press Enter. Press
 Esc or Ctrl-C to cancel; with the current scripts this can return a nonzero
@@ -156,7 +152,7 @@ The repository has no `doctor.sh` or automated test suite. To verify a change,
 check each script with its interpreter, then exercise the picker you changed:
 
 ```bash
-for wiki_script in install.sh scripts/wiki.sh scripts/wiki-lite.sh scripts/wiki-glow.sh; do
+for wiki_script in install.sh scripts/wiki.sh scripts/wiki-lite.sh; do
   bash -n "$wiki_script" || break
 done
 zsh -n scripts/git-hook-dir-audit.sh
