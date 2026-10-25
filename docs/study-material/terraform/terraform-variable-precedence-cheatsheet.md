@@ -1,5 +1,8 @@
 # Terraform Variable Precedence (Associate 004)
 
+**Scope:** Local CLI input loading. | [Study map](terraform-associate-004-overview.md)
+HCP Terraform adds workspace and variable-set precedence. See the [HCP guide](terraform-hcp-guide.md).
+
 When Terraform finds a value for the same variable in several places, the one
 **loaded last wins**.
 
@@ -57,6 +60,8 @@ terraform destroy -var-file="testing.tfvars"
   terraform plan -var-file="testing.tfvars" -out=tfplan
   terraform apply tfplan
   ```
+
+  Ephemeral input values are not stored in the plan. Supply them again when required.
 
 - **It overrides the auto-loaded files** (`terraform.tfvars`,
   `*.auto.tfvars`), which still load first.

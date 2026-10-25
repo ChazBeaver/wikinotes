@@ -1,5 +1,8 @@
 # Terraform Block Types (Associate 004)
 
+**Target:** Terraform 1.12. | [Study map](terraform-associate-004-overview.md)
+Examples are excerpts unless stated otherwise. Configure required providers and omitted inputs before use.
+
 Every Terraform file is built from **blocks**: `type "label" "label" { ... }`.
 This sheet lists each top-level block, then the blocks that only live inside
 other blocks.
@@ -12,7 +15,7 @@ other blocks.
 | | `provider` | Configure a plugin (region, credentials, default tags) |
 | Infrastructure | `resource` | Create and manage something |
 | | `data` | Read something that already exists |
-| | `ephemeral` | Read a short-lived value that must never be saved in state |
+| | `ephemeral` | Obtain or generate temporary values that Terraform omits from state and plans |
 | | `module` | Reuse a group of blocks as one unit |
 | Inputs / values / outputs | `variable` | Input from outside the configuration |
 | | `locals` | Named internal values |
@@ -20,7 +23,7 @@ other blocks.
 | State refactoring | `moved` | Rename or move a resource without destroying it |
 | | `import` | Bring an existing resource under Terraform |
 | | `removed` | Stop managing a resource, optionally without destroying it |
-| Validation | `check` | Ongoing health assertions that only warn |
+| Validation | `check` | Assertions evaluated during operations. False assertions warn. |
 
 **Memory aid:** a configuration has **settings** (how Terraform runs),
 **things** (what it builds or reads), **values** (what flows in and out),
@@ -34,7 +37,7 @@ other blocks.
 
 ```hcl
 terraform {
-  required_version = ">= 1.10"
+  required_version = ">= 1.12.0"
 
   required_providers {
     aws = {
@@ -52,9 +55,9 @@ terraform {
 }
 ```
 
-**Best used:** once per root module, to pin the Terraform version and provider
-versions and to store state remotely. Values here must be literals; you can't
-use variables in this block.
+**Best used:** declare CLI/provider constraints and optional remote-state settings.
+Child modules also declare their provider requirements.
+These settings do not accept ordinary variable or resource references.
 
 ### `provider`
 
@@ -108,11 +111,13 @@ resource "aws_instance" "web" {
 }
 ```
 
-**Best used:** to **look up** something Terraform doesn't manage: the latest
-AMI, an existing VPC, the current account ID. It is read-only; it never
-creates or changes anything. Reference it with a `data.` prefix.
+**Best used:** read information, such as an AMI, an existing VPC, or the current account ID.
+A data source can also read an object managed elsewhere in the configuration.
+It does not manage that object's lifecycle. Reference it with a `data.` prefix.
 
 ### `ephemeral` (Terraform 1.10+)
+
+The write-only database argument below also requires Terraform 1.11+ and a supporting provider version.
 
 ```hcl
 ephemeral "aws_secretsmanager_secret_version" "db" {
@@ -211,8 +216,8 @@ moved {
 ```
 
 **Best used:** when you **rename a resource or move it into a module**.
-Without it, Terraform would destroy the old one and create a new one. This
-is the code-reviewed replacement for `terraform state mv`.
+Without a state move, Terraform normally proposes destroying the old address and creating the new one.
+This is a declarative alternative to `terraform state mv`.
 
 ### `import` (Terraform 1.5+)
 
@@ -225,8 +230,8 @@ import {
 
 **Best used:** when a resource was **created by hand** (console, CLI) and you
 want Terraform to manage it. `terraform plan -generate-config-out=generated.tf`
-writes a starting `resource` block for you. This replaces running
-`terraform import` one resource at a time.
+writes a starting `resource` block when the target configuration is missing.
+This is a declarative alternative to `terraform import`.
 
 ### `removed` (Terraform 1.7+)
 
@@ -242,7 +247,7 @@ removed {
 
 **Best used:** to **stop managing a resource while leaving it running** in
 AWS, for example when another team takes it over. With `destroy = false`, it
-is dropped from state only. This replaces `terraform state rm`.
+is dropped from state only. This is a declarative alternative to `terraform state rm`.
 
 ---
 
@@ -275,13 +280,14 @@ These only appear inside another block.
 
 | Block | Lives inside | Best used for |
 | --- | --- | --- |
-| `required_providers` | `terraform` | Pinning each provider's source and version |
+| `required_providers` | `terraform` | Declaring provider sources and version constraints |
 | `backend` | `terraform` | Storing state remotely (S3, azurerm, gcs, ...) |
 | `cloud` | `terraform` | Connecting to HCP Terraform instead of a `backend` |
 | `default_tags` | `provider "aws"` | Tags on every resource from that provider |
-| `validation` | `variable` | Rejecting bad input before planning |
-| `lifecycle` | `resource`, `data` | Changing how Terraform replaces or destroys (see below) |
-| `precondition` / `postcondition` | `lifecycle`, `output` | Assertions that **fail** the run (unlike `check`) |
+| `validation` | `variable` | Rejecting bad input when required values become available |
+| `lifecycle` | `resource`, `data`, `ephemeral`, `removed` | Behavior depends on the parent. Not every parent accepts every rule. |
+| `precondition` | `lifecycle`, or directly in `output` | Check assumptions. False conditions produce errors. |
+| `postcondition` | Resource/data/ephemeral `lifecycle` | Check results. False conditions block dependent work. |
 | `dynamic` | any block that accepts repeated nested blocks | Generating repeated nested blocks from a list or map |
 | `provisioner` | `resource` | Running a script on create/destroy. Last resort; prefer `user_data` or config tools |
 | `connection` | `resource`, `provisioner` | SSH/WinRM details for a `remote-exec` or `file` provisioner |
@@ -339,14 +345,17 @@ it to hide a fixed, readable list; HashiCorp advises against overusing it.
   state.** `ephemeral` keeps it out of state entirely.
 - **Block names vs reference names:** `locals` → `local.x`; `variable` →
   `var.x`; `data` → `data.type.name`; `module` → `module.name.output`.
-- **Refactoring blocks replace older commands:** `moved` → `state mv`,
-  `import` block → `terraform import`, `removed` → `state rm`.
+- **Declarative blocks have CLI alternatives:** `moved` → `state mv`,
+  `import` → `terraform import`, `removed` → `state rm`. The commands still exist.
+
+See [custom conditions](terraform-custom-conditions-guide.md) for evaluation timing.
+See [state operations](terraform-state-operations-guide.md) for complete workflows.
 
 ## Quick self-test
 
 1. Which block looks up an existing VPC without managing it? → `data`
 2. You renamed `aws_instance.web` to `aws_instance.app`. Which block stops a destroy/create? → `moved`
-3. Which block pins the AWS provider version? → `required_providers` inside `terraform`
+3. Which block declares the AWS provider version constraint? → `required_providers` inside `terraform`
 4. A health assertion should warn but never block `apply`. Which block? → `check`
 5. How do you reference a local named `prefix`? → `local.prefix`
 6. Which block keeps a secret out of the state file entirely? → `ephemeral`
