@@ -25,9 +25,12 @@ To use the full functionality of `Wiki-Notes`, make sure the following tools are
 
 ## 🚀 Install
 
-Run the install script once per machine to register the repo location and its aliases:
+Personal repositories live at `~/Projects/home/<repo>` on every machine.
+Create the parent before cloning and run the installer to register this repo:
 
 ```bash
+mkdir -p ~/Projects/home
+git clone <repo-url> ~/Projects/home/wikinotes
 cd ~/Projects/home/wikinotes
 ./install.sh
 source ~/.dotfiles-env.sh
@@ -44,6 +47,14 @@ It persists these lines in `~/.dotfiles-env.sh` (the same file appdots and hyprd
 | `alias w` | Run `scripts/wiki.sh` (fuzzy search) from anywhere |
 
 Open a new shell afterwards, or `source ~/.dotfiles-env.sh`.
+
+The installer also creates `~/Projects/home` and the shared environment file
+if needed. It repairs this repo's export and both aliases, removes duplicate
+entries for those keys, and preserves other repos' entries. It registers the
+current checkout without moving it. The registry supplies appdots' bulk
+repository helpers, including `home-status` and `home-pull`. Wikinotes has no
+`sync.sh` or `doctor.sh`; rerun `./install.sh` to repair its registration.
+Check the writer in isolation with `bash tests/env.sh`.
 
 ---
 

@@ -1,16 +1,60 @@
 #!/usr/bin/env bash
-# Persist WIKINOTES_DIR and its aliases in ~/.dotfiles-env.sh.
-# Safe to re-run: existing lines are updated in place, missing ones appended.
 set -euo pipefail
 IFS=$'\n\t'
 
-# Get the absolute path of the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ensure_wikinotes_env() {
+  local repo_dir="$1"
+  # An explicit registry path lets fixtures avoid the real home directory.
+  local env_file="${2:-$HOME/.dotfiles-env.sh}"
+  local escaped_repo_dir temporary
+  escaped_repo_dir="${repo_dir//\\/\\\\}"
+  escaped_repo_dir="${escaped_repo_dir//\"/\\\"}"
+  escaped_repo_dir="${escaped_repo_dir//\$/\\\$}"
+  escaped_repo_dir="${escaped_repo_dir//\`/\\\`}"
+  local expected_export="export WIKINOTES_DIR=\"$escaped_repo_dir\""
+  local expected_alias='alias wikinotes="cd \$WIKINOTES_DIR"'
+  local expected_w_alias='alias w="\$WIKINOTES_DIR/scripts/wiki.sh"'
+  mkdir -p -- "$(dirname -- "$env_file")/Projects/home" || return 1
+  [[ -e "$env_file" ]] || touch -- "$env_file" || return 1
+  temporary="$(mktemp "${env_file}.XXXXXX")" || return 1
+  # ENVIRON preserves literal backslashes; awk -v would interpret them.
+  if ! DOTFILES_REGISTER_EXPORT="$expected_export" \
+       DOTFILES_REGISTER_ALIAS="$expected_alias" DOTFILES_REGISTER_W_ALIAS="$expected_w_alias" awk '
+    BEGIN {
+      desired_export = ENVIRON["DOTFILES_REGISTER_EXPORT"]
+      desired_alias = ENVIRON["DOTFILES_REGISTER_ALIAS"]
+      desired_w_alias = ENVIRON["DOTFILES_REGISTER_W_ALIAS"]
+    }
+    $0 ~ /^[[:space:]]*export[[:space:]]+WIKINOTES_DIR=/ {
+      if (!seen_export++) print desired_export
+      next
+    }
+    $0 ~ /^[[:space:]]*alias[[:space:]]+wikinotes=/ {
+      if (!seen_alias++) print desired_alias
+      next
+    }
+    $0 ~ /^[[:space:]]*alias[[:space:]]+w=/ {
+      if (!seen_w_alias++) print desired_w_alias
+      next
+    }
+    { print }
+    END {
+      if (!seen_export) print desired_export
+      if (!seen_alias) print desired_alias
+      if (!seen_w_alias) print desired_w_alias
+    }
+  ' "$env_file" > "$temporary"; then
+    rm -f -- "$temporary"
+    return 1
+  fi
+  if ! mv -- "$temporary" "$env_file"; then
+    rm -f -- "$temporary"
+    return 1
+  fi
+  export WIKINOTES_DIR="$repo_dir"
+}
 
-# Target env file for storing aliases and env vars
-ENV_FILE="$HOME/.dotfiles-env.sh"
-
-# Banner
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
 cat <<'BANNER'
 
  _    _ _____ _   _______  _   _ _____ _____ _____ _____ 
@@ -23,50 +67,9 @@ cat <<'BANNER'
                    Installing WikiNotes
 
 BANNER
-
-ensure_wikinotes_env() {
-  local repo_dir="$1"
-  local env_file="$2"
-  local escaped_repo_dir
-  local expected_export="export WIKINOTES_DIR=\"$repo_dir\""
-  local expected_alias='alias wikinotes="cd \$WIKINOTES_DIR"'
-  local expected_w_alias='alias w="\$WIKINOTES_DIR/scripts/wiki.sh"'
-
-  mkdir -p "$(dirname "$env_file")"
-  [[ -e "$env_file" ]] || touch "$env_file"
-
-  escaped_repo_dir="${repo_dir//\\/\\\\}"
-  escaped_repo_dir="${escaped_repo_dir//|/\\|}"
-  escaped_repo_dir="${escaped_repo_dir//&/\\&}"
-
-  if grep -Fqx "$expected_export" "$env_file"; then
-    :
-  elif grep -q '^export WIKINOTES_DIR=' "$env_file"; then
-    sed -i "s|^export WIKINOTES_DIR=.*|export WIKINOTES_DIR=\"$escaped_repo_dir\"|" "$env_file"
-  else
-    printf 'export WIKINOTES_DIR="%s"\n' "$repo_dir" >> "$env_file"
-  fi
-
-  if grep -Fqx "$expected_alias" "$env_file"; then
-    :
-  elif grep -q '^alias wikinotes=' "$env_file"; then
-    sed -i 's|^alias wikinotes=.*|alias wikinotes="cd \\$WIKINOTES_DIR"|' "$env_file"
-  else
-    printf '%s\n' "$expected_alias" >> "$env_file"
-  fi
-
-  if grep -Fqx "$expected_w_alias" "$env_file"; then
-    :
-  elif grep -q '^alias w=' "$env_file"; then
-    sed -i 's|^alias w=.*|alias w="\\$WIKINOTES_DIR/scripts/wiki.sh"|' "$env_file"
-  else
-    printf '%s\n' "$expected_w_alias" >> "$env_file"
-  fi
-
-  export WIKINOTES_DIR="$repo_dir"
-}
-
-ensure_wikinotes_env "$SCRIPT_DIR" "$ENV_FILE"
-echo "✅ WIKINOTES_DIR: $WIKINOTES_DIR"
-echo "✅ Aliases 'wikinotes' and 'w' persisted in $ENV_FILE"
-echo "   Open a new shell (or 'source $ENV_FILE') to use them."
+  SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+  ensure_wikinotes_env "$SCRIPT_DIR"
+  printf '%s\n' "✅ WIKINOTES_DIR: $WIKINOTES_DIR"
+  printf '%s\n' "✅ Aliases 'wikinotes' and 'w' persisted in $HOME/.dotfiles-env.sh"
+  printf '%s\n' 'Open a new shell or source ~/.dotfiles-env.sh.'
+fi
