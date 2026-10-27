@@ -172,7 +172,7 @@ platform/
       github-oidc/              # role assumed by GitHub Actions, no static keys
       budgets/                  # AWS Budgets with alarms
     envs/
-      prod/                     # the EKS environment (home lab is not Terraform-managed)
+      prod/                     # EKS resources; homelab provisioning is owned separately
   gitops/
     bootstrap/                  # ArgoCD install + root app-of-apps
     apps/                       # one Application per platform component
@@ -214,15 +214,24 @@ Start by calling the reusable workflows in `krypsis-io/.github` directly, since 
 
 ## 7. Environments
 
+Readiness correction (2026-10-27): the
+[homelab and certification build plan](homelab-and-certification-build-plan.md)
+is the source of truth for homelab timing, readiness, and infrastructure
+ownership. Its certification completion gate applies to the cluster-dependent
+portions of this design. The environments and promotion flow below describe a
+future design; no existing home cluster or installed services are assumed.
+
 | Environment | Where | Purpose | Managed by |
 |---|---|---|---|
-| dev | Home lab Kubernetes cluster (already exists, runs ArgoCD, GitLab, Prometheus) | Daily development, agent testing, cheap iteration | ArgoCD from `gitops/` with a dev overlay |
+| dev | Proposed home Kubernetes cluster, deferred under the homelab plan | Development, agent testing, cheap iteration | Proposed ArgoCD delivery from `gitops/` with a dev overlay |
 | prod | EKS in a personal commercial AWS account | The real thing. Findings, agents, evidence | Terraform in `terraform/envs/prod`, ArgoCD |
 | preview | Ephemeral namespace per pull request in prod cluster | Scan the change before merge | ArgoCD ApplicationSet pull-request generator |
 
 Promotion flow: change lands in a PR, preview namespace is created and scanned, human merges, ArgoCD syncs dev automatically, prod syncs after a manual sync or a tagged release. This mirrors a real multi-environment pipeline and is DevOps Pro study material.
 
-Home lab specifics are not Terraform-managed. Keep the dev overlay minimal so ArgoCD manifests stay the same between environments except for values.
+This platform plan owns its application overlays; the linked homelab plan owns
+VM provisioning and cluster bootstrap. Keep the dev overlay minimal so ArgoCD
+manifests stay the same between environments except for values.
 
 ---
 
@@ -285,7 +294,9 @@ Each component lists purpose, decisions already made, tasks, and acceptance crit
 **Purpose:** ArgoCD owns everything running in the cluster. Nothing is applied by hand after bootstrap.
 
 **Decisions:**
-- ArgoCD, not Flux, for the personal project, because Chaz already runs it in the home lab and the pull-request ApplicationSet generator is needed for previews. Flux stays a work skill.
+- ArgoCD remains the delivery choice for this platform and its preview design.
+  This choice does not imply an existing homelab installation. Flux stays a work
+  skill.
 - App-of-apps pattern with one root Application pointing at `gitops/apps/`.
 - Sync policy: automated with prune and self-heal for dev, manual sync for prod platform components, automated for tenant apps.
 - Helm charts are referenced by pinned version. Renovate bumps them.
@@ -704,6 +715,9 @@ Each phase has a plan document in `docs/plans/` once work starts. Dates align wi
 ---
 
 ## 13. Decision log
+
+Historical entries are preserved. Their existing-homelab assumptions are
+superseded by the readiness correction in section 7, recorded on 2026-10-27.
 
 | Date | Decision | Reason |
 |---|---|---|
