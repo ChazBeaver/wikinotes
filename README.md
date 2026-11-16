@@ -53,8 +53,9 @@ if needed. It repairs this repo's export and both aliases, removes duplicate
 entries for those keys, and preserves other repos' entries. It registers the
 current checkout without moving it. The registry supplies appdots' bulk
 repository helpers, including `home-status` and `home-pull`. Wikinotes has no
-`sync.sh` or `doctor.sh`; rerun `./install.sh` to repair its registration.
-Check the writer in isolation with `bash tests/env.sh`.
+`sync.sh`; rerun `./install.sh` to repair its registration.
+`./doctor.sh` checks only registration. For the unattended entrypoint, logs,
+exit codes, and fixtures, see [the installer contract](INSTALL.md).
 
 ---
 

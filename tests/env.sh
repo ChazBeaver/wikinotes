@@ -38,3 +38,6 @@ registered="$(bash -c 'source "$1"; printf "%s" "$WIKINOTES_DIR"' bash "$env_fil
 [[ "$(grep -c '^alias w=' "$env_file")" == 1 ]] || fail 'duplicate search aliases remain'
 grep -Fxq 'alias w="\$WIKINOTES_DIR/scripts/wiki.sh"' "$env_file" || fail 'search alias was not repaired'
 printf 'PASS: registration creates the parent, preserves literal paths and foreign entries, repairs duplicates, and is idempotent\n'
+
+source "$REPO_DIR/lib/registration.sh"
+check_registration "$repo_dir" "$env_file" || fail 'doctor rejected a literal checkout path'
