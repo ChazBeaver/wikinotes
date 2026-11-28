@@ -9,3 +9,6 @@
 **/.mono/keypairs/
 **/.zsh_history
 **/.bash_history
+
+# Neovim fallback log, written to the working directory when its state dir is unwritable.
+nvim.log
